@@ -1,9 +1,11 @@
 package es.upm.dit.aled.lab5;
 
 import java.awt.Color;
+
 import java.util.ArrayList;
 import java.util.List;
 
+//import es.upm.dit.aled.lab4.er.Transfer;
 import es.upm.dit.aled.lab5.gui.EmergencyRoomGUI;
 import es.upm.dit.aled.lab5.gui.Position2D;
 
@@ -164,7 +166,20 @@ public class Patient extends Thread {
 	 */
 	@Override
 	public void run() {
-		// TODO
+		location.enter(this);
+		attendedAtLocation();
+		location.exit(this);
+		
+		for(Transfer t : protocol) {
+			advanceProtocol();
+			location.enter(this);
+			attendedAtLocation();
+			location.exit(this);
+			}
+
+	EmergencyRoomGUI.getInstance().removePatient(this);
+	//	System.out.println("Patient " + this.number + " protocol finished at " + this.location);
+		
 	}
 
 }

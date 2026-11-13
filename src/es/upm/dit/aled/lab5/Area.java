@@ -40,7 +40,10 @@ public class Area {
 	 * @param position The location of the Area in the GUI.
 	 */
 	public Area(String name, int time, int capacity, Position2D position) {
-		// TODO
+		this.name = name;
+		this.capacity = capacity;
+		this.position = position;
+		this.time = time;
 		this.color = Color.GRAY; // Default color
 	}
 
@@ -96,7 +99,22 @@ public class Area {
 	 * 
 	 * @param p The patient that wants to enter.
 	 */
-	// TODO: method enter
+	public synchronized void enter(Patient p) {
+		waiting++;
+		while(numPatients>=capacity) {
+			//p.setLocation(this); no hace falta porque patient ya está en esa localización
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		numPatients++;
+		if(waiting>0) {
+			waiting--;
+		} 
+	}
 	
 	/**
 	 * Thread safe method that allows a Patient to exit the area. After the Patient
@@ -104,28 +122,37 @@ public class Area {
 	 * 
 	 * @param p The patient that wants to enter.
 	 */
-	// TODO method exit
+	public synchronized void exit(Patient p) {
+		numPatients--;
+		notifyAll();
+	}
 	
 	/**
 	 * Returns the capacity of the Area. This method must be thread safe.
 	 * 
 	 * @return The capacity.
 	 */
-	// TODO: method getCapacity
+	public int getCapacity() {
+		return this.capacity;
+	}
 	
 	/**
 	 * Returns the current number of Patients being treated at the Area. This method must be thread safe.
 	 * 
 	 * @return The number of Patients being treated.
 	 */
-	// TODO: method getNumPatients
+	public int getNumPatients() {
+		return numPatients;
+	}
 
 	/**
 	 * Returns the current number of Patients waiting to be treated at the Area. This method must be thread safe.
 	 * 
 	 * @return The number of Patients waiting to be treated.
 	 */
-	// TODO method getWaiting
+	public int getWaiting() {
+		return waiting;
+	}
 
 	@Override
 	public int hashCode() {

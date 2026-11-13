@@ -1,6 +1,8 @@
 package es.upm.dit.aled.lab5;
 
+import java.awt.Color;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Queue;
 
 import es.upm.dit.aled.lab5.gui.Position2D;
@@ -14,5 +16,33 @@ import es.upm.dit.aled.lab5.gui.Position2D;
  */
 public class AreaQueue extends Area {
 
-	// TODO
+	private Queue<Patient> waitQueue;
+	
+	public AreaQueue(String name, int time, int capacity, Position2D position) {
+		super(name, time, capacity, position);
+		
+		waitQueue = new LinkedList<Patient>();
+		
+	}
+
+	@Override
+	public synchronized void enter(Patient p) {
+		waiting++;
+		while(numPatients>=capacity) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		numPatients++;
+		if(waiting>0) {
+			waiting--;
+		} 
+	}
+	
+
+	
 }
+	
