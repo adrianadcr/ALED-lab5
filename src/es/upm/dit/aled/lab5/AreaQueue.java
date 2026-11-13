@@ -21,25 +21,28 @@ public class AreaQueue extends Area {
 	public AreaQueue(String name, int time, int capacity, Position2D position) {
 		super(name, time, capacity, position);
 		
-		waitQueue = new LinkedList<Patient>();
+		this.waitQueue = new LinkedList<Patient>();
 		
 	}
 
 	@Override
 	public synchronized void enter(Patient p) {
+		this.waitQueue.add(p);
 		waiting++;
-		while(numPatients>=capacity) {
+		while(numPatients>=capacity && this.waitQueue.peek() != p) {
 			try {
 				wait();
+				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		
+		this.waitQueue.remove();
 		numPatients++;
 		if(waiting>0) {
 			waiting--;
 		} 
+		
 	}
 	
 
